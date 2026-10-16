@@ -7,7 +7,9 @@ Projeto de exemplo da aula de programação para dispositivos móveis, utilizand
 O app apresenta uma série de botões, cada um com um som diferente. Ao clicar em um botão, o som correspondente é reproduzido.
 Ele pode ser utilizado em apresentações, eventos e jogos.
 
-![Exemplo de tela do app](./assets/images/screenshot.png)
+<p align="center">
+  <img src="./assets/images/screenshot.png" width="250" alt="Screenshot do app" />
+</p>
 
 ## Como rodar
 
