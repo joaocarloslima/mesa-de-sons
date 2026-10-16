@@ -1,98 +1,96 @@
-import * as Device from 'expo-device';
-import { Platform, StyleSheet } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { sounds } from "@/sounds";
+import { AudioSource, createAudioPlayer } from "expo-audio";
+import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
-import { AnimatedIcon } from '@/components/animated-icon';
-import { HintRow } from '@/components/hint-row';
-import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
-import { WebBadge } from '@/components/web-badge';
-import { BottomTabInset, MaxContentWidth, Spacing } from '@/constants/theme';
+export default function Index() {
+  const player = createAudioPlayer();
 
-function getDevMenuHint() {
-  if (Platform.OS === 'web') {
-    return <ThemedText type="small">use browser devtools</ThemedText>;
+  function play(file: AudioSource) {
+    player.replace(file);
+    player.play();
   }
-  if (Device.isDevice) {
-    return (
-      <ThemedText type="small">
-        shake device or press <ThemedText type="code">m</ThemedText> in terminal
-      </ThemedText>
-    );
-  }
-  const shortcut = Platform.OS === 'android' ? 'cmd+m (or ctrl+m)' : 'cmd+d';
+
   return (
-    <ThemedText type="small">
-      press <ThemedText type="code">{shortcut}</ThemedText>
-    </ThemedText>
+    <SafeAreaView style={styles.screen}>
+      <ScrollView contentContainerStyle={styles.content}>
+        <View style={styles.header}>
+          <View>
+            <Text style={styles.title}>Mesa de Sons 🎛️</Text>
+            <Text style={styles.subtitle}>Toque um botão para tocar</Text>
+          </View>
+          <View style={styles.icon}>
+            <Text style={styles.iconText}>🔊</Text>
+          </View>
+        </View>
+
+        <View style={styles.grade}>
+          {sounds.map((sound) => (
+            <Pressable
+              onPress={() => play(sound.file)}
+              key={sound.id}
+              style={[styles.botao, { backgroundColor: sound.color }]}
+            >
+              <Text style={styles.emoji}>{sound.emoji}</Text>
+              <Text style={styles.nome}>{sound.name}</Text>
+            </Pressable>
+          ))}
+        </View>
+      </ScrollView>
+    </SafeAreaView>
   );
 }
 
-export default function HomeScreen() {
-  return (
-    <ThemedView style={styles.container}>
-      <SafeAreaView style={styles.safeArea}>
-        <ThemedView style={styles.heroSection}>
-          <AnimatedIcon />
-          <ThemedText type="title" style={styles.title}>
-            Welcome to&nbsp;Expo
-          </ThemedText>
-        </ThemedView>
-
-        <ThemedText type="code" style={styles.code}>
-          get started
-        </ThemedText>
-
-        <ThemedView type="backgroundElement" style={styles.stepContainer}>
-          <HintRow
-            title="Try editing"
-            hint={<ThemedText type="code">src/app/index.tsx</ThemedText>}
-          />
-          <HintRow title="Dev tools" hint={getDevMenuHint()} />
-          <HintRow
-            title="Fresh start"
-            hint={<ThemedText type="code">npm run reset-project</ThemedText>}
-          />
-        </ThemedView>
-
-        {Platform.OS === 'web' && <WebBadge />}
-      </SafeAreaView>
-    </ThemedView>
-  );
-}
+const colors = {
+  orange: "#F28C28",
+  blue: "#0B3D6E",
+  background: "#FFF8F0",
+  text: "#1F2933",
+  lightText: "#6B7280",
+};
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    flexDirection: 'row',
-  },
-  safeArea: {
-    flex: 1,
-    paddingHorizontal: Spacing.four,
-    alignItems: 'center',
-    gap: Spacing.three,
-    paddingBottom: BottomTabInset + Spacing.three,
-    maxWidth: MaxContentWidth,
-  },
-  heroSection: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    flex: 1,
-    paddingHorizontal: Spacing.four,
-    gap: Spacing.four,
+    alignItems: "center",
+    justifyContent: "center",
   },
   title: {
-    textAlign: 'center',
+    fontSize: 32,
+    fontWeight: "bold",
+    color: colors.blue,
   },
-  code: {
-    textTransform: 'uppercase',
+  screen: { flex: 1, backgroundColor: colors.background },
+  content: { padding: 20, gap: 20 },
+  subtitle: { fontSize: 15, color: colors.lightText, marginTop: 2 },
+  icon: {
+    width: 52,
+    height: 52,
+    borderRadius: 26,
+    backgroundColor: colors.orange,
+    alignItems: "center",
+    justifyContent: "center",
   },
-  stepContainer: {
-    gap: Spacing.three,
-    alignSelf: 'stretch',
-    paddingHorizontal: Spacing.three,
-    paddingVertical: Spacing.four,
-    borderRadius: Spacing.four,
+  iconText: { fontSize: 24 },
+  header: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
   },
+  grade: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    rowGap: 14,
+    justifyContent: "space-between",
+  },
+  botao: {
+    width: "48%",
+    height: 130,
+    borderRadius: 20,
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 8,
+  },
+  emoji: { fontSize: 44 },
+  nome: { fontSize: 16, fontWeight: "bold", color: "#fff" },
 });
